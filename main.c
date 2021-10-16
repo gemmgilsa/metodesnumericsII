@@ -20,6 +20,9 @@ int main(void) {
         printf("error en la memòria\n");
         exit (1);
     }
+
+    // comentari
+
     for(i=0; i<n; i++) {
         for (j = 0; j < n; j++) {
             b[i][j] = h * h * f((i + 1) * h, (j + 1) * h);
