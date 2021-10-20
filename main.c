@@ -66,7 +66,7 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
                     x1[j][i]+=x0[j][i-1];
                 if(j!=0)
                     x1[j][i]+=x0[j-1][i];
-                if((i!=(n-1))
+                if(i!=(n-1))
                     x1[j][i]+=x0[j][i+1];
                 if((j!=(n-1)))
                     x1[j][i]+=x0[j+1][i];
@@ -85,7 +85,43 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
     }
     return iter;
 }
-
+int gaussseidel (double **b, double ** x, int n, double tol, int top){
+    int i, j,k, iter=0;
+    double **xaux, err=10, aux;
+    xaux= (double **)malloc(n* sizeof(double*));
+    for(i=0;i<n; i++){
+        xaux[i]=(double*)malloc(n*sizeof(double));
+    }
+    while(tol<=err && iter<top){
+        err=0;
+        for(i=0;i<n;i++){
+            for(j=0; j<n; j++){
+                xaux[j][i]=x[j][i];
+                aux=x[j][i];
+                x[j][i]=b[j][i];
+                if(i!=0)
+                    x[j][i]+=x[j][i-1];
+                if(j!=0)
+                    x[j][i]+=x[j-1][i];
+                if(i!=(n-1))
+                    x[j][i]+=x[j][i+1];
+                if((j!=(n-1)))
+                    x[j][i]+=x[j+1][i];
+                x[j][i]/=4;
+            }
+        }
+        iter++;
+        err=abs(norma(x, n)-norma(xaux, n));
+    }
+    for(i=0;i<n;i++){
+        free(xaux[i]);
+    }
+    free(xaux);
+    if(iter==top){
+        return -1;
+    }
+    return iter;
+}
 double norma(double **x, int n){
     int i, j;
     double max=0;
