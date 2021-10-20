@@ -1,3 +1,0 @@
-C:/Users/gemma/CLionProjects/metodesnumericsII/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/gemma/CLionProjects/metodesnumericsII/cmake-build-debug/CMakeFiles/metodesnumericsII.dir
-C:/Users/gemma/CLionProjects/metodesnumericsII/cmake-build-debug/CMakeFiles/rebuild_cache.dir
