@@ -22,7 +22,6 @@ int main(void) {
     }
 
     // comentari
-    // Hola marti
     for(i=0; i<n; i++) {
         for (j = 0; j < n; j++) {
             b[i][j] = h * h * f((i + 1) * h, (j + 1) * h);
@@ -48,14 +47,14 @@ int main(void) {
     free(x);
     return 0;
 }
-
+//hola ana
 double f (double x, double y){
     return -2*pow(x,3) + 6*x*pow(y,2);
 }
 double g (double x, double y){
     return pow(x, 3)*pow(y, 2)-x*pow(y,4);
 }
-double jacobi ** (double **b, double ** x0, int n){
+int jacobi (double **b, double ** x0, int n){
     int i, j,k, cont=0;
     double **x1;
     x1=(double**)calloc(n, sizeof(double*));
