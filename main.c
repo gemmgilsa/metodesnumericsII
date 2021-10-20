@@ -51,6 +51,7 @@ int main(void) {
 double f (double x, double y){
     return -2*pow(x,3) + 6*x*pow(y,2);
 }
+//chechiiiiiii
 double g (double x, double y){
     return pow(x, 3)*pow(y, 2)-x*pow(y,4);
 }
