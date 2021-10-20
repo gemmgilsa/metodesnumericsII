@@ -5,7 +5,7 @@
 
 double f (double,double);
 double g( double, double);
-double jacobi ** (double **, double **, int);
+int jacobi (double **, double **, int);
 int main(void) {
     int n, i, j;
     double h;
