@@ -48,7 +48,7 @@ int main(void) {
     free(x);
     return 0;
 }
-
+//chechi la mejor
 double f (double x, double y){
     return -2*pow(x,3) + 6*x*pow(y,2);
 }
