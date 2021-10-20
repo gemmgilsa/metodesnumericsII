@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
+#define TOL 10e-10
+#define TOP 1000
 
 double f (double,double);
 double g( double, double);
-int jacobi (double **, double **, int);
+int jacobi (double **, double **, int, double, int);
+double norma(double**, int);
 int main(void) {
     int n, i, j;
     double h;
@@ -35,10 +37,6 @@ int main(void) {
                 b[i][j] += g((i + 1) * h, (n + 1) * h);
         }
     }
-
-
-
-
     for(i=0;i<n;i++){
         free(b[i]);
         free(x[i]);
@@ -55,16 +53,49 @@ double f (double x, double y){
 double g (double x, double y){
     return pow(x, 3)*pow(y, 2)-x*pow(y,4);
 }
-int jacobi (double **b, double ** x0, int n){
-    int i, j,k, cont=0;
-    double **x1;
+int jacobi (double **b, double ** x0, int n, double tol, int top){
+    int i, j,k, iter=0;
+    double **x1, err=10;
     x1=(double**)calloc(n, sizeof(double*));
-    for(i=0;i<n;i++){
-        for(j=0; j<n; j++){
-            x1[j][i]=b[j][i];
-            if((i-1)!=
+    while(tol<=err && iter<top){
+        err=0;
+        for(i=0;i<n;i++){
+            for(j=0; j<n; j++){
+                x1[j][i]=b[j][i];
+                if(i!=0)
+                    x1[j][i]+=x0[j][i-1];
+                if(j!=0)
+                    x1[j][i]+=x0[j-1][i];
+                if((i!=(n-1))
+                    x1[j][i]+=x0[j][i+1];
+                if((j!=(n-1)))
+                    x1[j][i]+=x0[j+1][i];
+                x1[j][i]/=4;
             }
-            cont ++;
+        }
+        iter++;
+        err=abs(norma(x1, n)-norma(x0, n));
+    }
+    for(i=0;i<n;i++){
+        free(x1[i]);
+    }
+    free(x1);
+    if(iter==top){
+        return -1;
+    }
+    return iter;
+}
+
+double norma(double **x, int n){
+    int i, j;
+    double max=0;
+    for(i=0;i<n;i++){
+        for(j=0;j<n;j++){
+            if(abs(x[i][j]> max)){
+                max=abs(x[i][j]);
+            }
         }
     }
+    return max;
+
 }
