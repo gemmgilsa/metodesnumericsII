@@ -61,8 +61,7 @@ int jacobi (double **b, double ** x0, int n){
     for(i=0;i<n;i++){
         for(j=0; j<n; j++){
             x1[j][i]=b[j][i];
-            for(k=0;k<n;k++) {
-                x1[j][i] -=;
+            if((i-1)!=
             }
             cont ++;
         }
