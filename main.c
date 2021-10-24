@@ -7,9 +7,9 @@
 double f (double,double);
 double g( double, double);
 int jacobi (double **, double **, int, double, int);
-int gausseidel (double **, double ** , int , double , int);
+int gaussseidel (double **, double ** , int , double , int);
 int SOR (double **, double ** , int , double , int, double);
-double norma(double**, int);
+double norma(double**, double**, int);
 void printar( int, int, double **, double);
 int main(void) {
     int n, i, j, k;
@@ -18,8 +18,8 @@ int main(void) {
     printf("n=?\n");
     scanf("%d", &n);
     h=(double)1/(n+1);
-    printf("%le\n",h);
-    printf("w=?(factor de relaxació del mètodes SOR)\n");
+    printf("h=1/n=%le\n",h);
+    printf("w=?(factor de relaxacio del metode SOR)\n");
     scanf("%le", &w);
     b= (double **)malloc(n* sizeof(double*));
     if(b==NULL){
@@ -80,7 +80,7 @@ int main(void) {
     }else{
         printf("Jacobi convergeix a la iter %d\n", k);
     }
-    k=gausseidel(b, x, n, TOL, TOP);
+    k=gaussseidel(b, x, n, TOL, TOP);
     if(k<0){
         printf("El mètode de gausseidel no convergeix \n");
     }else{
@@ -123,7 +123,7 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
             exit(1);
         }
     }
-    while(tol<=err && iter<top){
+    while(err>tol && iter<top){
         err=0;
         for(i=0;i<n;i++){
             for(j=0; j<n; j++){
@@ -140,7 +140,7 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
             }
         }
         iter ++;
-        err=abs(norma(x1, n)-norma(x0, n));
+        err=fabs(norma(x1,x0, n));
         printar(iter, n, x1, err);
 
     }
@@ -186,7 +186,7 @@ int gaussseidel (double **b, double ** x, int n, double tol, int top){
             }
         }
         iter++;
-        err=abs(norma(x, n)-norma(xaux, n));
+        err=fabs(norma(x,xaux, n));
     }
     for(i=0;i<n;i++){
         free(xaux[i]);
@@ -224,7 +224,7 @@ int SOR (double **b, double ** x, int n, double tol, int top, double w){
             }
         }
         iter++;
-        err=abs(norma(x, n)-norma(xaux, n));
+        err=fabs(norma(x,xaux,n));
     }
     for(i=0;i<n;i++){
         free(xaux[i]);
@@ -236,13 +236,26 @@ int SOR (double **b, double ** x, int n, double tol, int top, double w){
     return iter;
 }
 
-double norma(double **x, int n){
+double norma(double **x, double **y, int n){
     int i, j;
-    double max=0;
+    double max=0, **dif;
+    dif= (double **)malloc(n* sizeof(double*));
+    if(dif==NULL){
+        printf("Error en la matriu b\n");
+        exit(1);
+    }
+    for(i=0;i<n;i++){
+        dif[i]=(double*)malloc(n*sizeof(double));
+        if(dif[i]==NULL){
+            printf("Error en la matriu, fila b%d\n", i);
+            exit(1);
+        }
+    }
     for(i=0;i<n;i++){
         for(j=0;j<n;j++){
-            if(abs(x[i][j]> max)){
-                max=abs(x[i][j]);
+            dif[i][j]=x[i][j]-y[i][j];
+            if(fabs(dif[i][j])> max){
+                max=fabs(dif[i][j]);
             }
         }
     }
