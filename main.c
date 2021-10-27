@@ -13,16 +13,16 @@ int SOR (double **, double ** , int , double , int, double);
 double norma(double**, double**, int);
 void printar( int, int, double **, double, double);
 int main(void) {
-    int n, i, j, k;
-    double h, w;
+    int n, i, j, k,t, min=TOP;
+    double h, w, wo;
     double **b, **x;
     printf("n=?\n");
     scanf("%d", &n);
+    /*Calculem la h=1/(n+1) i escrivim el que dona*/
     h=(double)1/(n+1);
-    printf("h=1/n=%le\n",h);
-    printf("w=?(factor de relaxacio del metode SOR)\n");
-    scanf("%le", &w);
-    b= (double **)malloc(n* sizeof(double*));
+    printf("h=%le\n",h);
+    /*Inicialitzem les matrius i els donem memòria*/
+    b=(double **)malloc(n* sizeof(double*));
     if(b==NULL){
         printf("Error en la matriu b\n");
         exit(1);
@@ -30,7 +30,7 @@ int main(void) {
     for(i=0;i<n;i++){
         b[i]=(double*)malloc(n*sizeof(double));
         if(b[i]==NULL){
-            printf("Error en la matriu, fila b1%d\n", i);
+            printf("Error en la matriu, fila b[%d]\n", i);
             exit(1);
         }
     }
@@ -46,7 +46,7 @@ int main(void) {
     for(i=0;i<n;i++){
         x[i]=(double*)calloc(n,sizeof(double));
         if(x[i]==NULL){
-            printf("Error en la matriu x%d\n", i);
+            printf("Error en la matriu x[%d]\n", i);
             for(i=0;i<n;i++){
                 free(b[i]);
             }
@@ -68,13 +68,15 @@ int main(void) {
                 b[i][j] += g((i + 1) * h, (n + 1) * h);
         }
     }
-    /*printf("terme independent i aproximacio inicial\n");
+    /*Calculem el terme independent i inicialitzem l'aproximació inicial a 0 */
+   /* printf("terme independent i aproximacio inicial\n");
     for(j=0;j<n;j++){
         for(i=0;i<n;i++){
             printf(" j = %d i= %d bij=%le   uij=%le\n", j+1, i+1, b[i][j], x[i][j]);
         }
     }*/
     printf("Comencem el proces iteratiu\n");
+    /*Cridem a jacobi i calculem les iteracions que li costa en convergir*/
     k=jacobi(b, x, n, TOL, TOP);
     if(k<0){
         printf("El metode de jacobi no convergeix \n");
@@ -86,6 +88,7 @@ int main(void) {
             x[i][j]=0;
         }
     }
+    /*Cridem a gausseidel i calculem les iteracions tambe*/
     k=gaussseidel(b, x, n, TOL, TOP);
     if(k<0){
         printf("El metode de gausseidel no convergeix \n");
@@ -97,11 +100,27 @@ int main(void) {
             x[i][j]=0;
         }
     }
-    k=SOR(b, x, n, TOL, TOP, w);
+
+    /*Definim w, anem provant per a diferents w, i mirem quina és la óptima, és a dir, amb quina w SOR convergeix amb menos iteracions */
+    for(i=1;i<200;i++){
+        w=i*0.01;
+        k=SOR(b, x, n, TOL, TOP, w);
+     //   printf("w=%le, k=%d \n",w, k);
+        if(k<min && k>=0){
+            min=k;
+            wo=w;
+        }
+        for(j=0;j<n;j++){
+            for(t=0;t<n;t++){
+                x[j][t]=0;
+            }
+        }
+    }
     if(k<0){
         printf("El metode de SOR no convergeix \n");
     }else{
-        printf("SOR convergeix a la iter %d\n", k);
+        printf("SOR convergeix a la iter %d\n", min);
+        printf("La w optima es %le\n",wo);
     }
     for(i=0;i<n;i++){
         free(b[i]);
