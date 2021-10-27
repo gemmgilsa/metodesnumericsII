@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
 #define TOL 10e-10
 #define TOP 100000
 
@@ -10,7 +11,7 @@ int jacobi (double **, double **, int, double, int);
 int gaussseidel (double **, double ** , int , double , int);
 int SOR (double **, double ** , int , double , int, double);
 double norma(double**, double**, int);
-void printar( int, int, double **, double);
+void printar( int, int, double **, double, double);
 int main(void) {
     int n, i, j, k;
     double h, w;
@@ -29,7 +30,7 @@ int main(void) {
     for(i=0;i<n;i++){
         b[i]=(double*)malloc(n*sizeof(double));
         if(b[i]==NULL){
-            printf("Error en la matriu, fila b%d\n", i);
+            printf("Error en la matriu, fila b1%d\n", i);
             exit(1);
         }
     }
@@ -85,6 +86,7 @@ int main(void) {
             x[i][j]=0;
         }
     }
+   /* printf("wo= %le\n", *wo);*/
     k=gaussseidel(b, x, n, TOL, TOP);
     if(k<0){
         printf("El metode de gausseidel no convergeix \n");
@@ -110,22 +112,22 @@ int main(void) {
     free(x);
     return 0;
 }
-double f(double x, double y){
+/*double f(double x, double y){
     return (x*x-2)*sin(y)+(4-2*y*y)*cos(x);
 }
 double g(double x, double y){
     return x*x*sin(y)-2*y*y*cos(x);
-}
-/*double f (double x, double y){
+}*/
+double f (double x, double y){
     return -2*pow(x,3) + 6*x*pow(y,2);
 }
 
 double g (double x, double y){
     return pow(x, 3)*pow(y, 2)-x*pow(y,4);
-}*/
+}
 int jacobi (double **b, double ** x0, int n, double tol, int top){
-    int i, j,k, iter=0;
-    double **x1, err=10;
+    int i, j,iter=0;
+    double **x1, err=1, errant, quo;
     x1=(double**)calloc(n, sizeof(double*));
     if(x1==NULL){
         printf("Error en la matriu\n");
@@ -139,7 +141,7 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
         }
     }
     while(err>tol && iter<top){
-        err=0;
+        errant=err;
         for(i=0;i<n;i++){
             for(j=0; j<n; j++){
                 x1[j][i]=b[j][i];
@@ -156,21 +158,23 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
         }
         iter ++;
         err=fabs(norma(x1,x0, n));
-        // printar(iter, n, x1, err);
+        quo=err/errant;
+        // printar(iter, n, x1, err, quo);
         for(i=0;i<n;i++){
             for(j=0;j<n;j++){
                 x0[i][j]=x1[i][j];
             }
         }
     }
-
+    printf(" quo final = %le\n", quo);
+   // wo=2./(1 + sqrt(1 - quo));
     for(i=0;i<n;i++){
         free(x1[i]);
     }
     free(x1);
     if(iter==top){
         iter=-1;
-        printar(iter, n, x1, err);
+        printar(iter, n, x1, err, quo);
         return -1;
     }
     return iter;
@@ -258,13 +262,13 @@ double norma(double **x, double **y, int n){
     double max=0, **dif;
     dif= (double **)malloc(n* sizeof(double*));
     if(dif==NULL){
-        printf("Error en la matriu b\n");
+        printf("Error en la matriu dif\n");
         exit(1);
     }
     for(i=0;i<n;i++){
         dif[i]=(double*)malloc(n*sizeof(double));
         if(dif[i]==NULL){
-            printf("Error en la matriu, fila b%d\n", i);
+            printf("Error en la matriu, fila dif%d\n", i);
             exit(1);
         }
     }
@@ -276,11 +280,15 @@ double norma(double **x, double **y, int n){
             }
         }
     }
+    for(i=0;i<n;i++){
+        free(dif[i]);
+    }
+    free(dif);
     return max;
 
 }
 
-void printar( int iter, int n, double **x, double err){
+void printar( int iter, int n, double **x, double err, double quo){
     int i, j;
     if(iter<0){
         printf("err_infinit= %le\n", err);
@@ -291,6 +299,6 @@ void printar( int iter, int n, double **x, double err){
             printf("k=%d   j=%d   i=%d   uij = %le\n", iter, j, i, x[i][j]);
         }
     }
-    printf("k= %d, error= %le\n", iter,err);
+    printf("k= %d, error= %le ,  quo=%le\n", iter,err, quo);
     return ;
 }
