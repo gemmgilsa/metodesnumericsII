@@ -86,7 +86,6 @@ int main(void) {
             x[i][j]=0;
         }
     }
-   /* printf("wo= %le\n", *wo);*/
     k=gaussseidel(b, x, n, TOL, TOP);
     if(k<0){
         printf("El metode de gausseidel no convergeix \n");
@@ -126,7 +125,7 @@ double g (double x, double y){
     return pow(x, 3)*pow(y, 2)-x*pow(y,4);
 }
 int jacobi (double **b, double ** x0, int n, double tol, int top){
-    int i, j,iter=0;
+    int i, j, iter=0;
     double **x1, err=1, errant, quo;
     x1=(double**)calloc(n, sizeof(double*));
     if(x1==NULL){
@@ -167,7 +166,6 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
         }
     }
     printf(" quo final = %le\n", quo);
-   // wo=2./(1 + sqrt(1 - quo));
     for(i=0;i<n;i++){
         free(x1[i]);
     }
@@ -180,7 +178,7 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
     return iter;
 }
 int gaussseidel (double **b, double ** x, int n, double tol, int top){
-    int i, j,k, iter=0;
+    int i, j, iter=0;
     double **xaux, err=10, aux;
     xaux= (double **)malloc(n* sizeof(double*));
     for(i=0;i<n; i++){
@@ -219,7 +217,7 @@ int gaussseidel (double **b, double ** x, int n, double tol, int top){
 }
 
 int SOR (double **b, double ** x, int n, double tol, int top, double w){
-    int i, j,k, iter=0;
+    int i, j, iter=0;
     double **xaux, err=10, aux;
     xaux= (double **)malloc(n* sizeof(double*));
     for(i=0;i<n; i++){
