@@ -1,3 +1,5 @@
+/* ANA VICTORIA GALINDO, GEMMA GIL SAURA  MÈTODES NUMÈRICS II */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -184,7 +186,7 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
             }
         }
     }
-    printf(" quo final = %le\n", quo);
+    printf("radi espectral = %le\n", quo);
     for(i=0;i<n;i++){
         free(x1[i]);
     }
@@ -276,31 +278,15 @@ int SOR (double **b, double ** x, int n, double tol, int top, double w){
 
 double norma(double **x, double **y, int n){
     int i, j;
-    double max=0, **dif;
-    dif= (double **)malloc(n* sizeof(double*));
-    if(dif==NULL){
-        printf("Error en la matriu dif\n");
-        exit(1);
-    }
-    for(i=0;i<n;i++){
-        dif[i]=(double*)malloc(n*sizeof(double));
-        if(dif[i]==NULL){
-            printf("Error en la matriu, fila dif%d\n", i);
-            exit(1);
-        }
-    }
+    double max=0;
+
     for(i=0;i<n;i++){
         for(j=0;j<n;j++){
-            dif[i][j]=x[i][j]-y[i][j];
-            if(fabs(dif[i][j])> max){
-                max=fabs(dif[i][j]);
+            if(fabs(x[i][j]-y[i][j])> max){
+                max=fabs(x[i][j]-y[i][j]);
             }
         }
     }
-    for(i=0;i<n;i++){
-        free(dif[i]);
-    }
-    free(dif);
     return max;
 
 }
