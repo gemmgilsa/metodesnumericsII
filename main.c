@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define TOL 10e-10
+#define TOL 10e-8
 #define TOP 100000
 
 double f (double,double);
@@ -186,7 +186,7 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
             }
         }
     }
-    printf("radi espectral = %le\n", quo);
+    printf("Radi espectral de jacobi = %le\n", quo);
     for(i=0;i<n;i++){
         free(x1[i]);
     }
@@ -200,17 +200,16 @@ int jacobi (double **b, double ** x0, int n, double tol, int top){
 }
 int gaussseidel (double **b, double ** x, int n, double tol, int top){
     int i, j, iter=0;
-    double **xaux, err=10, aux;
+    double **xaux, err=1, errant, quo;
     xaux= (double **)malloc(n* sizeof(double*));
     for(i=0;i<n; i++){
         xaux[i]=(double*)malloc(n*sizeof(double));
     }
     while(tol<=err && iter<=top){
-        err=0;
+        errant=err;
         for(i=0;i<n;i++){
             for(j=0; j<n; j++){
                 xaux[j][i]=x[j][i];
-                aux=x[j][i];
                 x[j][i]=b[j][i];
                 if(i!=0)
                     x[j][i]+=x[j][i-1];
@@ -225,8 +224,10 @@ int gaussseidel (double **b, double ** x, int n, double tol, int top){
         }
         iter++;
         err=fabs(norma(x,xaux, n));
+        quo=err/errant;
         //printf("%le\n",err);
     }
+    printf("Radi espectral de Gauss-Seidel = %le\n", quo);
     for(i=0;i<n;i++){
         free(xaux[i]);
     }
@@ -239,13 +240,13 @@ int gaussseidel (double **b, double ** x, int n, double tol, int top){
 
 int SOR (double **b, double ** x, int n, double tol, int top, double w){
     int i, j, iter=0;
-    double **xaux, err=10, aux;
+    double **xaux, err=1,errant, quo, aux;
     xaux= (double **)malloc(n* sizeof(double*));
     for(i=0;i<n; i++){
         xaux[i]=(double*)malloc(n*sizeof(double));
     }
     while(tol<=err && iter<top){
-        err=0;
+        errant=err;
         for(i=0;i<n;i++){
             for(j=0; j<n; j++){
                 xaux[j][i]=x[j][i];
@@ -265,7 +266,9 @@ int SOR (double **b, double ** x, int n, double tol, int top, double w){
         iter++;
         err=fabs(norma(x,xaux,n));
         //printf("%le\n",err);
+        quo=err/errant;
     }
+    printf("Radi espectral de SOR = %le\n", quo);
     for(i=0;i<n;i++){
         free(xaux[i]);
     }
